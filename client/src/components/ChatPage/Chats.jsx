@@ -39,12 +39,12 @@ const Chats = ({socket}) => {
   
   return(
     <>
-    {currentRoom ? (
+    {currentRoom.length > 0? (
     <div className="w-[80%] relative">
       {/* --------------------CHAT HEADER-------------------- */}
       <div className="w-full bg-[#343434] text-white p-5 absolute top-0">
-        <p>{currentRoom.name}</p>
-        <p className="text-xs italic">{currentRoom.id}</p>
+        <p>{currentRoom[0].name}</p>
+        <p className="text-xs italic">{currentRoom[0].id}</p>
       </div>
 
       <div className="w-full bg-white flex flex-col py-12 px-3 h-full mt-[50px]">
