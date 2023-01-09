@@ -10,10 +10,10 @@ const reducer = (state, action) => {
             return{ ...state, userInfo: action.userInfo}
 
         case ActionTypes.CREATE_CHAT:
-            return{...state, chatData: action.chatData}
+            return{...state, allRooms: action.allRooms}
         
         case ActionTypes.SET_CURRENT_CHAT:
-            return{...state, currentChat: action.currentChat}
+            return{...state, currentRoom: action.currentRoom}
         default :
             return state
     }

@@ -1,5 +1,5 @@
 export const initialState = {
     userInfo: [],
-    chatData: [],
-    currentChat: ''
+    allRooms: [],
+    currentRoom: ''
 }
