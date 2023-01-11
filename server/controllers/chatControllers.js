@@ -4,12 +4,12 @@ const newChat = async (req, res) => {
     const chat = await ChatSchema.create({
         id: req.body.id,
         name: req.body.name,
-    }) 
+    })
     
 
     try{
-        const newChat = await chat.save()
-        res.status(200).json(newChat)
+        const chatToPush = await chat.save()
+        res.status(200).json(chatToPush)
     }
     catch(err){
         res.status(400).send(err.message)

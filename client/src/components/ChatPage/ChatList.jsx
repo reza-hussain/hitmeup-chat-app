@@ -5,7 +5,7 @@ import {useStateValue} from '../../context/ContextProvider'
 
 
 const ChatList = ({socket, url}) => {
-  const [{allRooms}, dispatch] = useStateValue()
+  const [{userChats, allRooms}, dispatch] = useStateValue()
 
 
   const [newChat, setNewChat] = useState("")
@@ -14,15 +14,20 @@ const ChatList = ({socket, url}) => {
   const [joinModal, setJoinModal] = useState(false)
   const [error, setError] = useState("")
 
-  const chats = allRooms
-
   const signedInUser = JSON.parse(localStorage.getItem("userData")).email
 
   url.get(`/chatsById/${signedInUser}`, {
   }).then((res) => {
     dispatch({
       type: ActionTypes.SET_CHATS,
-      allRooms: res.data.chats
+      userChats: res.data.chats
+    })
+  })
+
+  url.get('/chats').then((res) => {
+    dispatch({
+      type: ActionTypes.SET_ALL_CHATS,
+      allRooms: res.data
     })
   })
 
@@ -31,7 +36,7 @@ const ChatList = ({socket, url}) => {
     e.preventDefault()
 
     if(newChat !== ""){
-      const existingIDs = allRooms.map((room) => room.id)
+      const existingIDs = userChats.map((room) => room.id)
       console.log(existingIDs)
       const chat = {
         id: Math.floor(Math.random()*1000000),
@@ -41,6 +46,13 @@ const ChatList = ({socket, url}) => {
       while(existingIDs.find((id) => id === chat.id)){
         chat.id = Math.floor(Math.random()*1000000)
       }
+
+      url.post('/newChat', {
+        id: chat.id,
+        name: newChat
+      }).then(() => {
+        console.log("Chat Pushed to Database")
+      })
       
 
       url.patch('/addChat', {
@@ -71,22 +83,24 @@ const ChatList = ({socket, url}) => {
 
   const joinChat = (e) => {
     e.preventDefault();
-
-    const chat = chats.filter((chat) => chat.id === parseInt(newChat))
-    try{
+    
+    const chatToJoin = allRooms.filter((room) => room.id === parseInt(newChat))
+    
+    
+    if(chatToJoin){
+      const chat = userChats.filter((chat) => chat.id === chatToJoin[0].id)
       if(chat){
-
-        dispatch({
-          type: ActionTypes.SET_CURRENT_CHAT,
-          currentRoom: {...chat}
+        setError("Chat already exists")
+      }
+      else{
+        url.patch('/addChat', {
+          email: signedInUser,
+          chats: chat[0]
         })
-
-        socket.emit("join-room", chat.id)
       }
     }
-    catch(err) {
 
-    }
+    
   }
 
   const selectChat = (chat) => {
@@ -120,7 +134,7 @@ const ChatList = ({socket, url}) => {
       
 
       <ul className="flex flex-col justify-start items-start gap-4 overflow-scroll h-[80%]">
-        {chats.length ? chats.map((chat, key) => (
+        {userChats.length ? userChats.map((chat, key) => (
           <li key={key} className={`px-4 py-6 w-full ${activeChat.id === chat.id ? 'bg-[#343434] text-white' :'bg-transparent text-[#343434]'} cursor-pointer`} onClick={() => {selectChat(chat)}}>{chat.name}</li>
         )): (
           <div>

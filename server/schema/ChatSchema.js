@@ -4,7 +4,6 @@ const ChatSchema = new mongoose.Schema({
     id: Number,
     name: {
         type: String,
-        required: true
     }
 
 })

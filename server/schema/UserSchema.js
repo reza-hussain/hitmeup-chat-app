@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const ChatSchema = require('./ChatSchema.js').schema
 
 
 const UserSchema =  new mongoose.Schema({
@@ -10,8 +11,9 @@ const UserSchema =  new mongoose.Schema({
         type: String,
         required: true
     },
-    chats: {
-        type: Array
+    chats:{
+        type: [ChatSchema],
+        default: []
     }
 })
 
