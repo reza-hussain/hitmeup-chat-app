@@ -1,6 +1,6 @@
 export const ActionTypes = {
     SET_USER : 'SET_USER',
-    CREATE_CHAT: 'CREATE_CHAT',
+    SET_CHATS: 'SET_CHATS',
     SET_CURRENT_CHAT: 'SET_CURRENT_CHAT'
 }
 
@@ -9,7 +9,7 @@ const reducer = (state, action) => {
         case ActionTypes.SET_USER :
             return{ ...state, userInfo: action.userInfo}
 
-        case ActionTypes.CREATE_CHAT:
+        case ActionTypes.SET_CHATS:
             return{...state, allRooms: action.allRooms}
         
         case ActionTypes.SET_CURRENT_CHAT:
