@@ -35,11 +35,16 @@ io.on('connection', (socket) => {
 
     socket.on("join-room", (roomId) => {
         socket.join(roomId)
-        console.log('Joined', roomId)
+        console.log(`User ${socket.id} joined room : ${roomId}`)
     })
 
     socket.on("send_message", (data) => {
        socket.to(data.room).emit("receive_message", data)
+       console.log(`User ${socket.id} sent message to room : ${data.room}`)
+    })
+
+    socket.on('typing', (data) => {
+        socket.broadcast.emit("typingResponse", data)
     })
 })
 

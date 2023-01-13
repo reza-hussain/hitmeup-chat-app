@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { ActionTypes } from '../../context/reducer'
 import {useStateValue} from '../../context/ContextProvider'
 
 
 const ChatList = ({socket, url}) => {
-  const [{userChats, allRooms}, dispatch] = useStateValue()
+  const [{userChats, allRooms, currentRoom}, dispatch] = useStateValue()
 
-
+ 
   const [newChat, setNewChat] = useState("")
   const [activeChat, setActiveChat] = useState([])
   const [chatModal, setChatModal] = useState(false)
@@ -16,20 +16,24 @@ const ChatList = ({socket, url}) => {
 
   const signedInUser = JSON.parse(localStorage.getItem("userData")).email
 
-  url.get(`/chatsById/${signedInUser}`, {
-  }).then((res) => {
-    dispatch({
-      type: ActionTypes.SET_CHATS,
-      userChats: res.data.chats
+  useEffect(() => {
+    url.get(`/users/${signedInUser}`, {
+    }).then((res) => {
+      dispatch({
+        type: ActionTypes.SET_CHATS,
+        userChats: res.data.chats
+      })
     })
-  })
+  }, [currentRoom])
 
-  url.get('/chats').then((res) => {
-    dispatch({
-      type: ActionTypes.SET_ALL_CHATS,
-      allRooms: res.data
+  useEffect(() => {
+    url.get('/chats').then((res) => {
+      dispatch({
+        type: ActionTypes.SET_ALL_CHATS,
+        allRooms: res.data
+      })
     })
-  })
+  }, [currentRoom])
 
 
   const createChat = async (e) => {
@@ -66,7 +70,6 @@ const ChatList = ({socket, url}) => {
           currentRoom: {...chat}
         })
       })
-
       
       setChatModal(false)
       // setNewChat("")
@@ -84,22 +87,29 @@ const ChatList = ({socket, url}) => {
   const joinChat = (e) => {
     e.preventDefault();
     
-    const chatToJoin = allRooms.filter((room) => room.id === parseInt(newChat))
-    
-    
-    if(chatToJoin){
-      const chat = userChats.filter((chat) => chat.id === chatToJoin[0].id)
-      if(chat){
-        setError("Chat already exists")
-      }
-      else{
-        url.patch('/addChat', {
-          email: signedInUser,
-          chats: chat[0]
-        })
-      }
+    const chatExists = userChats.filter((chat) => chat.id === parseInt(newChat))
+    console.log("chatExists: ",chatExists.length)
+
+    if(chatExists.length === 0){
+      const chatToPush = allRooms.filter((chat) => chat.id === parseInt(newChat))
+      
+      url.patch('/addchat', {
+        email: signedInUser,
+        chats: chatToPush[0]
+      })
+
+      socket.emit('join-room', newChat)
+
+      dispatch({
+        type: ActionTypes.SET_CURRENT_CHAT,
+        currentRoom: {...chatToPush}
+      })
+      
     }
 
+    else{
+      setError("Chat already exists")
+    }
     
   }
 

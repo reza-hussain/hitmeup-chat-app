@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/login',  userControllers.login)
 router.get('/users',  userControllers.getUsers)
 router.patch('/addChat', userControllers.addChat)
-router.get('/chatsById/:email', userControllers.getChatById)
+router.get('/users/:email', userControllers.getChatById)
 router.delete('/deleteAll', userControllers.deleteAllUsers)
 
 router.post('/newChat', chatControllers.newChat)

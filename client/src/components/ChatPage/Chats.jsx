@@ -18,12 +18,14 @@ const Chats = ({socket}) => {
 
   const [messageSent, setMessageSent] = useState([])
   const [messageReceived, setMessageReceived] = useState([])
-
+  const [typingStatus, setTypingStatus] = useState()
   const [allMessages, setAllMessages] = useState([])
+
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setMessageReceived({fromSelf: false, message: data.message})
+      console.log('message received')
     })
     
     if(messageReceived.message !== undefined){
@@ -35,7 +37,9 @@ const Chats = ({socket}) => {
     
   }, [socket, messageReceived])
 
-  
+  useEffect(() => {
+    socket.on('typingResponse', (data) => setTypingStatus("typing..."))
+  },[typingStatus])
   
   return(
     <>
@@ -54,7 +58,7 @@ const Chats = ({socket}) => {
           </div>
         ))}
       </div>
-
+      {typingStatus && <div>{typingStatus}</div>}
       <ChatInput allMessages={allMessages} setAllMessages={setAllMessages} socket={socket} messageSent={messageSent} setMessageSent={setMessageSent} />
     </div>
   ):(

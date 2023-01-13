@@ -8,6 +8,8 @@ const ChatInput = ({ allMessages, setAllMessages, socket}) => {
     const[{currentRoom}] = useStateValue()
     const[message, setMessage] = useState('')
 
+    const handleTyping = () => socket.emit('typing', `Typing...`);
+
     const sendMessage = (e) => {
       
       if(message.length > 0){
@@ -23,9 +25,9 @@ const ChatInput = ({ allMessages, setAllMessages, socket}) => {
           id: `${socket.id * Math.random(1000)}`,
           socketID: socket.id,
           fromSelf: true,
-          room: currentRoom
+          room: currentRoom.id
         })
-
+        
         setMessage('')
       }
     }
@@ -33,7 +35,7 @@ const ChatInput = ({ allMessages, setAllMessages, socket}) => {
     return (
     
       <div className="w-full flex justify-start items-center bg-slate-100 mt-auto border border-black absolute bottom-0" tabIndex="0">
-          <input id="input" type="text" className="w-full px-3 py-2 outline-none" placeholder="Type your message here..." onKeyDown={(e) => e.code === 'Enter' && sendMessage()} onChange={(e) => setMessage(e.target.value)} />
+          <input id="input" type="text" className="w-full px-3 py-2 outline-none" placeholder="Type your message here..." onKeyDown={(e) => e.code === 'Enter' ? sendMessage() : handleTyping()} onChange={(e) => setMessage(e.target.value)} />
           <button className="px-8 py-2 bg-black text-white outline-none" onClick={sendMessage}>Send</button>
       </div>
   )}
