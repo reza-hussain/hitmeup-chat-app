@@ -1,6 +1,6 @@
 ﻿# HMU Chat-Application (MERN)
 
-![HMU Chat-App ](https://imgur.com/a/ZG7pEsX)
+![HMU Chat-App ](https://i.imgur.com/Ichl0Ki.png)
 
 Hi there ***Developers***. This is my first time creating a fully functional **Real-Time Chat Application** using ***React JS*** and ***Socket IO***. My aim before beginning this project was to code everything on my own and take little to no help from the internet, and here I am.
 
