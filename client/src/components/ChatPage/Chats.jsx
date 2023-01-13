@@ -38,28 +38,33 @@ const Chats = ({socket}) => {
   }, [socket, messageReceived])
 
   useEffect(() => {
-    socket.on('typingResponse', (data) => setTypingStatus("typing..."))
-  },[typingStatus])
+    socket.on('typingResponse', (data, id) => setTypingStatus(`${id} is typing...`))
+
+    setTimeout(() => {
+      setTypingStatus('')
+    }, 1000)
+    
+  })
   
   return(
     <>
     {currentRoom !== ''? (
     <div className="w-[80%] relative">
       {/* --------------------CHAT HEADER-------------------- */}
-      <div className="w-full bg-[#343434] text-white p-5 absolute top-0">
+      <div className="w-full bg-[#343434] text-white p-5 absolute top-0 z-10">
         <p>{currentRoom.name}</p>
         <p className="text-xs italic">{currentRoom.id}</p>
       </div>
 
-      <div className="w-full bg-white flex flex-col py-12 px-3 h-full mt-[50px]">
+      <div className="w-full bg-white flex flex-col py-12 px-3 h-full mt-[50px] relative">
         {allMessages.length > 0 && allMessages.map((message, key) => (
           <div key={key} className="w-full py-2">
             <Bubble message={message} />
           </div>
         ))}
+        <div className="absolute bottom-28 italic">{typingStatus}</div>
       </div>
-      {typingStatus && <div>{typingStatus}</div>}
-      <ChatInput allMessages={allMessages} setAllMessages={setAllMessages} socket={socket} messageSent={messageSent} setMessageSent={setMessageSent} />
+      <ChatInput allMessages={allMessages} setTypingStatus={setTypingStatus} setAllMessages={setAllMessages} socket={socket} messageSent={messageSent} setMessageSent={setMessageSent} />
     </div>
   ):(
     <div className="w-[80%] relative bg-white flex">Please select a chat or Create a new one</div>

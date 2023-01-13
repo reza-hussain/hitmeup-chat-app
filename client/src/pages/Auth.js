@@ -44,7 +44,7 @@ const Auth = ({url}) => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen bg-gray-200">
+    <div className="flex flex-col justify-center items-center w-full h-full bg-gray-200">
       <form className="flex flex-col gap-3 drop-shadow-md p-10 border-2 border-gray-300 rounded-sm" onSubmit={(e) => e.preventDefault()}>
         <input 
         type="text"

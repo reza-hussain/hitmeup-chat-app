@@ -10,7 +10,7 @@ const url = axios.create({
 })
 const App = () => {
   return (
-    <div className="flex border-2 justify-center items-center h-screen 2xl:bg-gray-500">
+    <div className="flex justify-center items-center h-screen 2xl:bg-gray-500">
       <div className="w-screen 2xl:w-[1366px] 2xl:h-[768px] h-screen 2xl:rounded-lg overflow-hidden">
         <Routes>
           <Route path="/" element={<Auth url={url}/>} />

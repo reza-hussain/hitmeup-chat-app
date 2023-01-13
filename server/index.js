@@ -38,13 +38,13 @@ io.on('connection', (socket) => {
         console.log(`User ${socket.id} joined room : ${roomId}`)
     })
 
-    socket.on("send_message", (data) => {
+    socket.on("send_message", (data, id) => {
        socket.to(data.room).emit("receive_message", data)
        console.log(`User ${socket.id} sent message to room : ${data.room}`)
     })
 
-    socket.on('typing', (data) => {
-        socket.broadcast.emit("typingResponse", data)
+    socket.on('typing', (data, id) => {
+        socket.to(data).emit("typingResponse", data, id)
     })
 })
 

@@ -13,6 +13,7 @@ const ChatList = ({socket, url}) => {
   const [chatModal, setChatModal] = useState(false)
   const [joinModal, setJoinModal] = useState(false)
   const [error, setError] = useState("")
+  const [reloader, setReloader] = useState(0)
 
   const signedInUser = JSON.parse(localStorage.getItem("userData")).email
 
@@ -24,7 +25,8 @@ const ChatList = ({socket, url}) => {
         userChats: res.data.chats
       })
     })
-  }, [currentRoom])
+    
+  }, [reloader, socket])
 
   useEffect(() => {
     url.get('/chats').then((res) => {
@@ -33,7 +35,9 @@ const ChatList = ({socket, url}) => {
         allRooms: res.data
       })
     })
-  }, [currentRoom])
+    console.log("refreshed")
+  }, [reloader, socket])
+
 
 
   const createChat = async (e) => {
@@ -56,6 +60,7 @@ const ChatList = ({socket, url}) => {
         name: newChat
       }).then(() => {
         console.log("Chat Pushed to Database")
+        
       })
       
 
@@ -64,12 +69,19 @@ const ChatList = ({socket, url}) => {
         chats: chat
       }).then(() => {
         setActiveChat(chat)
-
+        
         dispatch({
           type: ActionTypes.SET_CURRENT_CHAT,
           currentRoom: {...chat}
         })
+
+        socket.emit('join-room', chat.id)
       })
+      
+      setTimeout(() => {
+        setReloader(reloader + 1)
+        console.log(reloader)
+      }, 1000)
       
       setChatModal(false)
       // setNewChat("")
@@ -88,23 +100,30 @@ const ChatList = ({socket, url}) => {
     e.preventDefault();
     
     const chatExists = userChats.filter((chat) => chat.id === parseInt(newChat))
-    console.log("chatExists: ",chatExists.length)
+    console.log("chatExists: ", chatExists.length)
 
     if(chatExists.length === 0){
-      const chatToPush = allRooms.filter((chat) => chat.id === parseInt(newChat))
-      
-      url.patch('/addchat', {
-        email: signedInUser,
-        chats: chatToPush[0]
+      let chatToPush
+
+      url.get('/chats').then((res) => chatToPush = res.data.filter((chat) => chat.id === parseInt(newChat))[0])
+      .then(() => {
+        url.patch('/addchat', {
+          email: signedInUser,
+          chats: chatToPush
+        }).then(() => {
+          console.log("topush",chatToPush)
+          setReloader(reloader + 1)
+  
+          dispatch({
+            type: ActionTypes.SET_CURRENT_CHAT,
+            currentRoom: {...chatToPush}
+          })
+          socket.emit('join-room', newChat)
+          console.log(currentRoom)
+        })
       })
 
-      socket.emit('join-room', newChat)
-
-      dispatch({
-        type: ActionTypes.SET_CURRENT_CHAT,
-        currentRoom: {...chatToPush}
-      })
-      
+      setJoinModal(false)
     }
 
     else{
@@ -120,8 +139,9 @@ const ChatList = ({socket, url}) => {
       type: ActionTypes.SET_CURRENT_CHAT,
       currentRoom: chat
     })
-
+    
     socket.emit('join-room', chat.id)
+    setReloader(reloader + 1)
   }
    
   return (
@@ -143,7 +163,7 @@ const ChatList = ({socket, url}) => {
       {joinModal && (<JoinModal setNewChat={setNewChat} joinChat={joinChat} error={error}/>)}
       
 
-      <ul className="flex flex-col justify-start items-start gap-4 overflow-scroll h-[80%]">
+      <ul className="flex flex-col justify-start items-start gap-4 overflow-scroll h-[80%] scrollbar-thin">
         {userChats.length ? userChats.map((chat, key) => (
           <li key={key} className={`px-4 py-6 w-full ${activeChat.id === chat.id ? 'bg-[#343434] text-white' :'bg-transparent text-[#343434]'} cursor-pointer`} onClick={() => {selectChat(chat)}}>{chat.name}</li>
         )): (
