@@ -25,11 +25,11 @@ This app still lacks a lot of features that I'm going to implement soon, but I w
  - ✔️ Typing Status
 
 ## To be added...
-⌛- User Authentication
-⌛- Login/Log out
-⌛- Leave Room
-⌛- Delete Room
-⌛- User Details
+ - ⌛ User Authentication
+ - ⌛- Login/Log out
+ - ⌛- Leave Room
+ - ⌛- Delete Room
+ - ⌛- User Details
 
 # Working of The Application 🚀
 
