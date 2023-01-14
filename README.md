@@ -19,10 +19,10 @@ This app still lacks a lot of features that I'm going to implement soon, but I w
 
 # Features 🚀
 
-✔️ - User Details Form (No Authentication)
-✔️ - Sending and Receiving Messages
-✔️ - Create and Join Rooms
-✔️ - Typing Status
+ - ✔️ User Details Form (No Authentication)
+ - ✔️ Sending and Receiving Messages
+ - ✔️ Create and Join Rooms
+ - ✔️ Typing Status
 
 ## To be added...
 ⌛- User Authentication
